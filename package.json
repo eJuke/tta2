@@ -1,0 +1,11 @@
+{
+  "name": "tta2",
+  "version": "1.0.0",
+  "description": "TimeTracker Autocomplete tool",
+  "main": "tta2.js",
+  "author": "Eugene Voynov",
+  "license": "GPLv3",
+  "dependencies": {
+    "argparse": "2.0.1"
+  }
+}
