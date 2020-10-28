@@ -1,13 +1,20 @@
 const axios = require("axios");
+const qs = require("qs");
 const { convertToBase64, logErrorAndExit } = require("./utils");
 const { TT_URL } = require("./constants");
 
-module.exports.loadTtPage = (username, password) => {
+module.exports.loadTtPage = (username, password, requestData) => {
 
-    return axios.post(TT_URL, null, {
+    return axios({
+        method: "POST",
+        url: TT_URL,
         headers: {
-            "Authorization": `Basic: ${convertToBase64(`${username}:${password}`)}`
-        }
+            "Authorization": `Basic: ${convertToBase64(`${username}:${password}`)}`,
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        data: requestData
+            ? qs.stringify(requestData, { encodeValuesOnly: true })
+            : undefined
     }).catch(error => {
 
         if (!error.response) {

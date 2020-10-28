@@ -55,6 +55,7 @@ fillAction.add_argument("-sd", "--start-date", {
     type: "str",
     metavar: "YYYY-MM-DD",
     default: DateTime.local().startOf("month").toISODate(),
+    dest: "startDate",
 });
 
 fillAction.add_argument("-ed", "--end-date", {
@@ -62,6 +63,7 @@ fillAction.add_argument("-ed", "--end-date", {
     type: "str",
     metavar: "YYYY-MM-DD",
     default: DateTime.local().endOf("month").toISODate(),
+    dest: "endDate",
 });
 
 fillAction.add_argument("-sod", "--start-of-day", {
@@ -69,6 +71,7 @@ fillAction.add_argument("-sod", "--start-of-day", {
     type: "int",
     metavar: "HOUR",
     default: 10,
+    dest: "startOfDay"
 });
 
 fillAction.add_argument("-eod", "--end-of-day", {
@@ -76,6 +79,7 @@ fillAction.add_argument("-eod", "--end-of-day", {
     type: "int",
     metavar: "HOUR",
     default: 18,
+    dest: "endOfDay"
 });
 
 // SCAN TT OPTIONS

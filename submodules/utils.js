@@ -11,7 +11,7 @@ module.exports.logErrorAndExit = (errorMessage) => {
 
 module.exports.getAllSelectOptions = (html, selectName) => {
 
-    const selectStartPos = html.search((`<select.*name=.{1,5}${selectName}.*>`));
+    const selectStartPos = html.search(new RegExp(`<select.*name="${selectName}".*>`));
     const selectEndPos = selectStartPos + html.substring(selectStartPos).search("</select>") + 9;
     const selectCode = html.substring(selectStartPos, selectEndPos);
 
@@ -25,4 +25,14 @@ module.exports.getAllSelectOptions = (html, selectName) => {
     }
 
     return options.filter(i => i.value);
+}
+
+module.exports.getInputValue = (html, inputName) => {
+
+    const inputRegex = new RegExp(`<input.*name="${inputName}".*value="(.*)".*>`);
+    const searchResult = inputRegex.exec(html);
+
+    return searchResult
+        ? searchResult[1]
+        : null;
 }
