@@ -38,3 +38,37 @@ module.exports.parseDate = (date) => {
 
     return new Date(nativelyParsedValue);
 }
+
+module.exports.convertToBase64 = (source) => {
+
+    return Buffer.from(source).toString("base64")
+}
+
+module.exports.logErrorAndExit = (errorMessage) => {
+
+    console.error(errorMessage);
+    process.exit(1);
+}
+
+/**
+ * 
+ * @param {string} html 
+ * @param {string} selectName 
+ */
+module.exports.getAllSelectOptions = (html, selectName) => {
+
+    const selectStartPos = html.search((`<select.*name=.{1,5}${selectName}.*>`));
+    const selectEndPos = selectStartPos + html.substring(selectStartPos).search("</select>") + 9;
+    const selectCode = html.substring(selectStartPos, selectEndPos);
+
+    const optionRegex = /<option.*value=\"(.*)\".*>(.*)<\/option>/ig;
+    const options = [];
+    let optionMatch;
+
+    while(optionMatch = optionRegex.exec(selectCode)) {
+
+        options.push({ value: optionMatch[1], name: optionMatch[2] });
+    }
+
+    return options.filter(i => i.value);
+}

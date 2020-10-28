@@ -1,0 +1,1 @@
+module.exports.TT_URL = "https://tt.muranosoft.com/TimeEntry.aspx";
