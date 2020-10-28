@@ -13,7 +13,7 @@ const parser = new ArgumentParser({
 const actions = parser.add_subparsers({
     title: "Actions",
     dest: "actionName",
-    description: "Type tta2 <action> --help for more details"
+    description: "Type tta2 <action> --help for more details",
 });
 
 // FILL
@@ -25,50 +25,61 @@ const fillAction = actions.add_parser("fill", {
 
 fillAction.add_argument("-u", "--username", {
     help: "Your username",
-    type: "str"
+    required: true,
+    type: "str",
 });
 
 fillAction.add_argument("-p", "--password", {
     help: "Your password",
+    required: true,
     type: "str",
 });
 
 fillAction.add_argument("-d", "--description", {
     help: "Default description for all new records",
+    required: true,
     type: "str",
 });
 
 fillAction.add_argument("-c", "--category", {
     help: "TimeTracker category",
+    required: true,
+    metavar: "ID",
     type: "int",
 });
 
 fillAction.add_argument("-pr", "--project", {
-    help: "TimeTracker project. Default: first project of the list",
+    help: "TimeTracker project",
+    required: true,
+    metavar: "ID",
     type: "int",
 });
 
 fillAction.add_argument("-sd", "--start-date", {
-    help: "First day of autocomplete. Default: first day of the month",
+    help: "First day of autocompletion. Default: first day of the month",
     type: "str",
+    metavar: "YYYY-MM-DD",
     default: formatDate(getStartOfMonth()),
 });
 
 fillAction.add_argument("-ed", "--end-date", {
-    help: "Last day of autocomplete. Default: last day of the month",
+    help: "Last day of autocompletion. Default: last day of the month",
     type: "str",
+    metavar: "YYYY-MM-DD",
     default: formatDate(getEndOfMonth()),
 });
 
 fillAction.add_argument("-sod", "--start-of-day", {
-    help: "Hour of workday begin. Default: 10",
+    help: "Start time for the working hours. Default: 10",
     type: "int",
+    metavar: "HOUR",
     default: 10,
 });
 
 fillAction.add_argument("-eod", "--end-of-day", {
-    help: "Hour of workday end. Default: 18",
+    help: "End time for the working hours. Default: 18",
     type: "int",
+    metavar: "HOUR",
     default: 18,
 });
 
@@ -81,10 +92,14 @@ const scanTtOptionsAction = actions.add_parser("scan-tt-options", {
 
 scanTtOptionsAction.add_argument("-u", "--username", {
     help: "Your username",
+    required: true,
+    type: "str",
 });
 
 scanTtOptionsAction.add_argument("-p", "--password", {
     help: "Your password",
+    required: true,
+    type: "str",
 });
 
 module.exports.parseCliArguments = () => {

@@ -4,11 +4,6 @@ const { TT_URL } = require("./constants");
 
 module.exports.scanTimeTracker = async (params) => {
 
-    if (!params.username || !params.password) {
-
-        logErrorAndExit("You need to specify both username and password. See help for more details");
-    }
-
     axios.post(TT_URL, null, {
         headers: {
             "Authorization": `Basic: ${convertToBase64(`${params.username}:${params.password}`)}`
