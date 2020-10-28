@@ -15,13 +15,13 @@ module.exports.getAllSelectOptions = (html, selectName) => {
     const selectEndPos = selectStartPos + html.substring(selectStartPos).search("</select>") + 9;
     const selectCode = html.substring(selectStartPos, selectEndPos);
 
-    const optionRegex = /<option.*value=\"(.*)\".*>(.*)<\/option>/ig;
+    const optionRegex = /<option\s*(selected)?.*value=\"(.*)\".*>(.*)<\/option>/ig;
     const options = [];
     let optionMatch;
 
     while(optionMatch = optionRegex.exec(selectCode)) {
 
-        options.push({ value: optionMatch[1], name: optionMatch[2] });
+        options.push({ value: optionMatch[2], name: optionMatch[3], selected: !!optionMatch[1] });
     }
 
     return options.filter(i => i.value);

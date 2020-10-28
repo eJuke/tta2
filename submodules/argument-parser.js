@@ -45,8 +45,7 @@ fillAction.add_argument("-c", "--category", {
 });
 
 fillAction.add_argument("-pr", "--project", {
-    help: "TimeTracker project",
-    required: true,
+    help: "TimeTracker project. Default: default user project",
     metavar: "ID",
     type: "int",
 });

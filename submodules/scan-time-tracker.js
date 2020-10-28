@@ -16,7 +16,7 @@ module.exports.scanTimeTracker = async (params) => {
         getAllSelectOptions(html, "ctl00\\$_content\\$ddlProjects")
             .forEach(option => {
 
-                console.log(`${option.name} (${option.value})`);
+                console.log(`${option.name} (${option.value}${option.selected ? " - DEFAULT" : ""})`);
             });
 
         console.log();
