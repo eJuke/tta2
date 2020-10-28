@@ -1,9 +1,5 @@
 const { ArgumentParser } = require("argparse");
-const {
-    getEndOfMonth,
-    getStartOfMonth,
-    formatDate,
-} = require("./utils");
+const { DateTime } = require("luxon");
 
 const parser = new ArgumentParser({
     description: "TimeTracker Autocomplete tool",
@@ -59,14 +55,14 @@ fillAction.add_argument("-sd", "--start-date", {
     help: "First day of autocompletion. Default: first day of the month",
     type: "str",
     metavar: "YYYY-MM-DD",
-    default: formatDate(getStartOfMonth()),
+    default: DateTime.local().startOf("month").toISODate(),
 });
 
 fillAction.add_argument("-ed", "--end-date", {
     help: "Last day of autocompletion. Default: last day of the month",
     type: "str",
     metavar: "YYYY-MM-DD",
-    default: formatDate(getEndOfMonth()),
+    default: DateTime.local().endOf("month").toISODate(),
 });
 
 fillAction.add_argument("-sod", "--start-of-day", {
