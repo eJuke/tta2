@@ -68,7 +68,7 @@ module.exports.fillTimeTracker = async (params) => {
     const defaultProject = projects.find(i => i.selected).value;
     const selectedProject = params.project || defaultProject;
 
-    const availableUsers = getAllSelectOptions(initialResponse.data, "ctl00\$_content\$ddlUsers");
+    const availableUsers = getAllSelectOptions(initialResponse.data, "ctl00\\$_content\\$ddlUsers");
     const userId = availableUsers.find(i => i.selected).value;
 
     if (!selectedProject) {
