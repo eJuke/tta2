@@ -3,19 +3,25 @@ const qs = require("qs");
 const { convertToBase64, logErrorAndExit } = require("./utils");
 const { TT_URL, IS_DAY_OFF_URL, DayType } = require("./constants");
 
-module.exports.loadTtPage = (username, password, requestData) => {
+module.exports.loadTtPage = async (username, password, requestData) => {
 
-    return axios({
-        method: "POST",
-        url: TT_URL,
-        headers: {
-            "Authorization": `Basic: ${convertToBase64(`${username}:${password}`)}`,
-            "Content-Type": "application/x-www-form-urlencoded"
-        },
-        data: requestData
-            ? qs.stringify(requestData, { encodeValuesOnly: true })
-            : undefined
-    }).catch(error => {
+    try {
+
+        const response = await axios({
+            method: "POST",
+            url: TT_URL,
+            headers: {
+                "Authorization": `Basic: ${convertToBase64(`${username}:${password}`)}`,
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            data: requestData
+                ? qs.stringify(requestData, { encodeValuesOnly: true })
+                : undefined
+        });
+
+        return response;
+    }
+    catch(error) {
 
         if (!error.response) {
 
@@ -33,7 +39,7 @@ module.exports.loadTtPage = (username, password, requestData) => {
 
             logErrorAndExit("Unknown error");
         }
-    });
+    }
 }
 
 module.exports.getDayType = async (date, countryCode) => {
