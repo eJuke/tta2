@@ -1,7 +1,7 @@
 const axios = require("axios");
 const qs = require("qs");
 const { convertToBase64, logErrorAndExit } = require("./utils");
-const { TT_URL } = require("./constants");
+const { TT_URL, IS_DAY_OFF_URL, DayType } = require("./constants");
 
 module.exports.loadTtPage = (username, password, requestData) => {
 
@@ -34,4 +34,37 @@ module.exports.loadTtPage = (username, password, requestData) => {
             logErrorAndExit("Unknown error");
         }
     });
+}
+
+module.exports.getDayType = async (date) => {
+
+    const dateIsWeekend = date.weekdayShort == "Sat"
+        || date.weekdayShort == "Sun";
+
+    try {
+
+        const response = await axios({
+            method: "GET",
+            url: `${IS_DAY_OFF_URL}/${date.toISODate()}`
+        });
+
+        if (response.data == "1" && dateIsWeekend) {
+
+            return DayType.DayOff;
+        }
+        else if (response.data == "1" && !dateIsWeekend) {
+
+            return DayType.Holiday;
+        }
+        else {
+
+            return DayType.WorkDay;
+        }
+    }
+    catch (errorResponse) {
+
+        return dateIsWeekend
+            ? DayType.DayOff
+            : DayType.WorkDay;
+    }
 }

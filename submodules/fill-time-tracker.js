@@ -1,5 +1,6 @@
 const { DateTime } = require("luxon");
-const { loadTtPage } = require("./requests");
+const { DayType } = require("./constants");
+const { loadTtPage, getDayType } = require("./requests");
 const { logErrorAndExit, getAllSelectOptions, getInputValue } = require("./utils");
 
 function selectDay(username, password, prevPageHtml, date, sharedRequestParams) {
@@ -73,7 +74,7 @@ async function fillSingleDay(
 
 module.exports.fillTimeTracker = async (params) => {
 
-    if (DateTime.fromISO(params.endOfDay).diff(DateTime.fromISO(params.startDate), "days").days < 0) {
+    if (DateTime.fromISO(params.endDate).diff(DateTime.fromISO(params.startDate), "days").days < 0) {
 
         logErrorAndExit("Please check your range. Start date is after end date");
     }
@@ -98,9 +99,19 @@ module.exports.fillTimeTracker = async (params) => {
 
     do {
 
-        if (currentDate.weekdayShort == "Sat" || currentDate.weekdayShort == "Sun") {
+        const dayType = await getDayType(currentDate);
 
-            console.log(`${currentDate.toISODate()} - ${categories.find(i => i.value == params.category).name} - SKIPPED (Day off)`);
+        const description = dayType == DayType.Holiday
+            ? "Holiday"
+            : params.description;
+
+        const category = dayType == DayType.Holiday
+            ? categories.find(i => i.name.trim() === "Holiday").value
+            : params.category;
+
+        if (dayType == DayType.DayOff) {
+
+            console.log(`${currentDate.toISODate()} - ${categories.find(i => i.value == category).name} - SKIPPED (Day off)`);
         }
         else {
 
@@ -112,15 +123,17 @@ module.exports.fillTimeTracker = async (params) => {
                         userId,
                         selectedProject,
                         currentDate,
+                        description,
+                        category,
                     },
                     initialResponse,
                 );
 
-                console.log(`${currentDate.toISODate()} - ${categories.find(i => i.value == params.category).name} - OK`);
+                console.log(`${currentDate.toISODate()} - ${categories.find(i => i.value == category).name} - OK`);
             }
             catch {
 
-                console.log(`${currentDate.toISODate()} - ${categories.find(i => i.value == params.category).name} - FAILED`);
+                console.log(`${currentDate.toISODate()} - ${categories.find(i => i.value == category).name} - FAILED`);
             }
         }
 
