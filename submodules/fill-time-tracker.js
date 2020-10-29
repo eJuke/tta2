@@ -98,23 +98,30 @@ module.exports.fillTimeTracker = async (params) => {
 
     do {
 
-        try {
+        if (currentDate.weekdayShort == "Sat" || currentDate.weekdayShort == "Sun") {
 
-            await fillSingleDay(
-                {
-                    ...params,
-                    userId,
-                    selectedProject,
-                    currentDate,
-                },
-                initialResponse,
-            );
-
-            console.log(`${currentDate.toISODate()} - ${categories.find(i => i.value == params.category).name} - OK`);
+            console.log(`${currentDate.toISODate()} - ${categories.find(i => i.value == params.category).name} - SKIPPED (Day off)`);
         }
-        catch {
+        else {
 
-            console.log(`${currentDate.toISODate()} - ${categories.find(i => i.value == params.category).name} - FAILED`);
+            try {
+
+                await fillSingleDay(
+                    {
+                        ...params,
+                        userId,
+                        selectedProject,
+                        currentDate,
+                    },
+                    initialResponse,
+                );
+
+                console.log(`${currentDate.toISODate()} - ${categories.find(i => i.value == params.category).name} - OK`);
+            }
+            catch {
+
+                console.log(`${currentDate.toISODate()} - ${categories.find(i => i.value == params.category).name} - FAILED`);
+            }
         }
 
         currentDate = currentDate.plus({ day: 1 });
