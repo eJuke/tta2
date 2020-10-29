@@ -99,7 +99,7 @@ module.exports.fillTimeTracker = async (params) => {
 
     do {
 
-        const dayType = await getDayType(currentDate);
+        const dayType = await getDayType(currentDate, params.countryCode);
 
         const description = dayType == DayType.Holiday
             ? "Holiday"

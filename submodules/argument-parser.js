@@ -82,6 +82,14 @@ fillAction.add_argument("-eod", "--end-of-day", {
     dest: "endOfDay"
 });
 
+fillAction.add_argument("-cc", "--country-code", {
+    help: "Country code that's used to determine holidays and days off",
+    choices: ["ru", "ua", "by", "kz"],
+    metavar: "CODE",
+    default: "ru",
+    dest: "countryCode"
+});
+
 // SCAN TT OPTIONS
 
 const scanTtOptionsAction = actions.add_parser("scan-tt-options", {

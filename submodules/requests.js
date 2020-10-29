@@ -36,7 +36,7 @@ module.exports.loadTtPage = (username, password, requestData) => {
     });
 }
 
-module.exports.getDayType = async (date) => {
+module.exports.getDayType = async (date, countryCode) => {
 
     const dateIsWeekend = date.weekdayShort == "Sat"
         || date.weekdayShort == "Sun";
@@ -45,7 +45,7 @@ module.exports.getDayType = async (date) => {
 
         const response = await axios({
             method: "GET",
-            url: `${IS_DAY_OFF_URL}/${date.toISODate()}`
+            url: `${IS_DAY_OFF_URL}/${date.toISODate()}?cc=${countryCode}`
         });
 
         if (response.data == "1" && dateIsWeekend) {
