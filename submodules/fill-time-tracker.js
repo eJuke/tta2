@@ -2,9 +2,7 @@ const { DateTime } = require("luxon");
 const { loadTtPage } = require("./requests");
 const { logErrorAndExit, getAllSelectOptions, getInputValue } = require("./utils");
 
-function selectDay(username, password, prevPageHtml, params) {
-
-    const { category, project, date, startOfDay, endOfDay, description, userId } = params;
+function selectDay(username, password, prevPageHtml, date, sharedRequestParams) {
 
     const daysSinceStartOfCentury = date
         .startOf("day")
@@ -18,25 +16,13 @@ function selectDay(username, password, prevPageHtml, params) {
         __VIEWSTATE: getInputValue(prevPageHtml, "__VIEWSTATE"),
         RadAJAXControlID: "ctl00__content_RadAjaxManager1",
         ctl00$_content$ScriptManager1: "ctl00$_content$ctl00$_content$panelEditFormPanel|ctl00$_content$lbtnAddEntry",
-        ctl00$_content$ddlProjects: project,
-        ctl00$_content$ddlCategories: category,
-        ctl00$_content$ucStartTime$ddlHour: startOfDay,
-        ctl00$_content$ucStartTime$ddlMinutes: 0,
-        ctl00$_content$ucEndTime$ddlHour: endOfDay,
-        ctl00$_content$ucEndTime$ddlMinutes: 0,
-        ctl00$_content$ddlUsers: userId,
-        ctl00$_content$ddlMonths: date.month,
-        ctl00$_content$ddlYears: date.year,
-        ctl00$_content$ddlDays: date.startOf("day").toFormat("dd.MM.yyyy 0:00:00"),
-        ctl00$_content$tboxDescription: description,
+        ...sharedRequestParams,
     };
 
     return loadTtPage(username, password, requestData);
 }
 
-function addTtRecord(username, password, prevPageHtml, params) {
-
-    const { category, project, date, startOfDay, endOfDay, description, userId } = params;
+function addTtRecord(username, password, prevPageHtml, sharedRequestParams) {
 
     const requestData = {
         __EVENTTARGET: "ctl00$_content$lbtnAddEntry",
@@ -44,17 +30,7 @@ function addTtRecord(username, password, prevPageHtml, params) {
         __VIEWSTATE: getInputValue(prevPageHtml, "__VIEWSTATE"),
         RadAJAXControlID: "ctl00__content_RadAjaxManager1",
         ctl00$_content$ScriptManager1: "ctl00$_content$ctl00$_content$panelEditFormPanel|ctl00$_content$lbtnAddEntry",
-        ctl00$_content$ddlProjects: project,
-        ctl00$_content$ddlCategories: category,
-        ctl00$_content$ucStartTime$ddlHour: startOfDay,
-        ctl00$_content$ucStartTime$ddlMinutes: 0,
-        ctl00$_content$ucEndTime$ddlHour: endOfDay,
-        ctl00$_content$ucEndTime$ddlMinutes: 0,
-        ctl00$_content$ddlUsers: userId,
-        ctl00$_content$ddlMonths: date.month,
-        ctl00$_content$ddlYears: date.year,
-        ctl00$_content$ddlDays: date.startOf("day").toFormat("dd.MM.yyyy 0:00:00"),
-        ctl00$_content$tboxDescription: description,
+        ...sharedRequestParams,
     }
 
     return loadTtPage(username, password, requestData);
@@ -64,6 +40,7 @@ module.exports.fillTimeTracker = async (params) => {
 
     const initialResponse = await loadTtPage(params.username, params.password);
 
+    const categories = getAllSelectOptions(initialResponse.data, "ctl00\\$_content\\$ddlCategories");
     const projects = getAllSelectOptions(initialResponse.data, "ctl00\\$_content\\$ddlProjects");
     const defaultProject = projects.find(i => i.selected).value;
     const selectedProject = params.project || defaultProject;
@@ -76,20 +53,27 @@ module.exports.fillTimeTracker = async (params) => {
         logErrorAndExit("Unable to determine default project. Please specify that via --project option");
     }
 
+    const currentDate = DateTime.fromISO(params.startDate);
+
     const requestParams = {
-        category: params.category,
-        project: selectedProject,
-        date: DateTime.fromISO(params.startDate),
-        startOfDay: params.startOfDay,
-        endOfDay: params.endOfDay,
-        description: params.description,
-        userId,
-    };
+        ctl00$_content$ddlProjects: selectedProject,
+        ctl00$_content$ddlCategories: params.category,
+        ctl00$_content$ucStartTime$ddlHour: params.startOfDay,
+        ctl00$_content$ucStartTime$ddlMinutes: 0,
+        ctl00$_content$ucEndTime$ddlHour: params.endOfDay,
+        ctl00$_content$ucEndTime$ddlMinutes: 0,
+        ctl00$_content$ddlUsers: userId,
+        ctl00$_content$ddlMonths: currentDate.month,
+        ctl00$_content$ddlYears: currentDate.year,
+        ctl00$_content$ddlDays: currentDate.startOf("day").toFormat("dd.MM.yyyy 0:00:00"),
+        ctl00$_content$tboxDescription: params.description,
+    }
 
     const selectDayResponse = await selectDay(
         params.username,
         params.password,
         initialResponse.data,
+        currentDate,
         requestParams,
     );
 
@@ -100,5 +84,5 @@ module.exports.fillTimeTracker = async (params) => {
         requestParams,
     );
 
-    console.log()
+    console.log(`${currentDate.toISODate()} - ${categories.find(i => i.value == params.category).name} - OK`);
 }
