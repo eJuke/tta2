@@ -44,8 +44,7 @@ module.exports.loadTtPage = async (username, password, requestData) => {
 
 module.exports.getDayType = async (date, countryCode) => {
 
-    const dateIsWeekend = date.weekdayShort == "Sat"
-        || date.weekdayShort == "Sun";
+    const dateIsWeekend = date.weekday == 6 || date.weekday == 7;
 
     try {
 
